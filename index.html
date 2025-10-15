@@ -1,0 +1,304 @@
+<!doctype html>
+
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bie News — Notícias da Província</title>
+  <meta name="description" content="Bie News — site de notícias da província e do país. Área reservada ao administrador para publicar e editar notícias." />
+  <style>
+    :root{
+      --red:#c82333;
+      --yellow:#f5b700;
+      --black:#0b0b0b;
+      --muted:#f4f4f6;
+      --card-bg: #ffffff;
+      --radius:14px;
+      --shadow: 0 6px 18px rgba(11,11,11,0.08);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#fff 0%,#f8f9fb 100%);color:#111}/* Layout */
+.app{display:flex;min-height:100vh}
+.sidebar{
+  width:290px;background:linear-gradient(180deg,var(--black),#1b1b1b);color:var(--muted);padding:28px;display:flex;flex-direction:column;gap:18px;position:sticky;top:0;height:100vh;
+  border-right:6px solid var(--red);
+  box-shadow: var(--shadow);
+}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:54px;height:54px;border-radius:12px;background:conic-gradient(from 200deg,var(--red),var(--yellow),#e6e6e6);display:flex;align-items:center;justify-content:center;color:var(--black);font-weight:700}
+.brand h1{margin:0;font-size:18px}
+.brand p{margin:0;font-size:12px;color:#ddd}
+
+.menu{display:flex;flex-direction:column;gap:8px}
+.menu button{appearance:none;border:0;background:transparent;color:inherit;padding:10px 12px;text-align:left;border-radius:10px;cursor:pointer;font-weight:600}
+.menu button:hover{background:rgba(255,255,255,0.03)}
+
+.section-tag{display:flex;gap:8px;align-items:center;padding:8px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent);font-size:13px}
+.tag-dot{width:10px;height:10px;border-radius:50%}
+.dot-red{background:var(--red)}.dot-yellow{background:var(--yellow)}.dot-black{background:var(--black)}
+
+.spacer{flex:1}
+.login-btn{background:var(--yellow);color:var(--black);padding:10px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+
+/* Main */
+main{flex:1;padding:28px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+.search{flex:1;display:flex;gap:8px}
+.search input{flex:1;padding:12px;border-radius:12px;border:1px solid #e6e6e9;background:white}
+
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+.feed{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card-bg);padding:18px;border-radius:var(--radius);box-shadow:var(--shadow);border:3px solid transparent}
+.card.border-custom{border-image: linear-gradient(90deg,var(--red),var(--yellow)) 1;}
+.card h2{margin:0 0 8px 0}
+.meta{font-size:12px;color:#666;margin-bottom:12px}
+.excerpt{color:#222;line-height:1.45}
+.actions{display:flex;gap:8px;margin-top:12px}
+.btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+.btn.primary{background:var(--red);color:white}
+.btn.ghost{background:transparent;border:1px solid #eee}
+
+/* Right column */
+.aside{display:flex;flex-direction:column;gap:12px}
+.trend{display:flex;flex-direction:column;gap:8px}
+.small{font-size:13px;color:#333}
+
+/* Admin editor */
+.editor{display:none;flex-direction:column;gap:10px}
+.editor.show{display:flex}
+.editor input,.editor textarea{padding:10px;border-radius:10px;border:1px solid #ddd;font-size:14px}
+
+/* Responsive */
+@media (max-width:920px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:relative;border-right:0;border-bottom:6px solid var(--red)}
+  .grid{grid-template-columns:1fr}
+}
+
+/* small UI flourishes */
+footer{margin-top:26px;color:#666;font-size:13px}
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Menu lateral">
+      <div class="brand">
+        <div class="logo">BIE</div>
+        <div>
+          <h1>Bie News</h1>
+          <p>Notícias da província e do país</p>
+        </div>
+      </div><div class="menu" role="navigation" aria-label="Seções do site">
+    <div class="section-tag"><span class="tag-dot dot-red"></span> Destaques</div>
+    <button data-section="politica">Política</button>
+    <button data-section="desporto">Desporto</button>
+    <button data-section="cultura">Cultura (Música / Teatro / Dança)</button>
+    <button data-section="religiao">Religião</button>
+    <button data-section="saude">Saúde</button>
+    <button data-section="turismo">Turismo</button>
+    <button data-section="economia">Economia</button>
+    <button data-section="educacao">Educação</button>
+    <button data-section="opiniao">Opinião</button>
+  </div>
+
+  <div class="spacer"></div>
+  <div>
+    <button id="adminToggle" class="login-btn">Área do Administrador</button>
+    <p style="margin-top:8px;font-size:12px;color:#ccc">Login seguro — apenas administradores autorizados podem editar notícias</p>
+  </div>
+</aside>
+
+<main>
+  <div class="topbar">
+    <div style="display:flex;gap:14px;align-items:center;width:100%">
+      <div style="font-weight:700;font-size:20px">Bie News</div>
+      <div class="search"><input id="searchInput" placeholder="Pesquisar notícias..." aria-label="Pesquisar"></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="font-size:13px;color:#666">Últimas</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <section class="feed" aria-live="polite">
+
+      <!-- Editor (aparece só para admin) -->
+      <div id="editor" class="card editor" role="region" aria-label="Editor de Notícias">
+        <h3>Editor — Publicar / Editar Notícia</h3>
+        <input id="newsId" type="hidden">
+        <input id="newsTitle" placeholder="Título da notícia">
+        <select id="newsSection">
+          <option value="destaque">Destaque</option>
+          <option value="politica">Política</option>
+          <option value="desporto">Desporto</option>
+          <option value="cultura">Cultura</option>
+          <option value="religiao">Religião</option>
+          <option value="saude">Saúde</option>
+          <option value="turismo">Turismo</option>
+          <option value="economia">Economia</option>
+        </select>
+        <textarea id="newsContent" rows="6" placeholder="Corpo da notícia"></textarea>
+        <div style="display:flex;gap:8px">
+          <button id="saveNews" class="btn primary">Salvar</button>
+          <button id="cancelEdit" class="btn ghost">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- Feed de notícias -->
+      <div id="newsList">
+        <!-- News cards serão inseridos via JS -->
+      </div>
+
+    </section>
+
+    <aside class="aside">
+      <div class="card border-custom">
+        <h4>Seções populares</h4>
+        <div class="small">Política — Destaques do dia</div>
+        <div class="small">Desporto — Jogos e resultados</div>
+        <div class="small">Cultura — Música, teatro e dança</div>
+      </div>
+
+      <div class="card">
+        <h4>Sobre</h4>
+        <p class="small">Bie News tem como objetivo divulgar notícias da província e do país. Conteúdo local com credibilidade e transparência.</p>
+      </div>
+
+      <div class="card">
+        <h4>Newsletter</h4>
+        <input id="newsletterEmail" placeholder="Seu e‑mail" style="width:100%;padding:8px;border-radius:8px;border:1px solid #eee">
+        <div style="margin-top:8px"><button id="subscribe" class="btn primary">Assinar</button></div>
+      </div>
+
+    </aside>
+  </div>
+
+  <footer>
+    © <span id="year"></span> Bie News — Todos os direitos reservados.
+  </footer>
+</main>
+
+  </div>  <!-- Login modal (simples, client-side) -->  <div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(2,2,2,0.5);align-items:center;justify-content:center">
+    <div style="background:white;padding:20px;border-radius:14px;min-width:320px;max-width:420px">
+      <h3>Login de Administrador</h3>
+      <p style="margin-top:0;color:#555;font-size:14px">Introduza a senha de administrador</p>
+      <input id="passwordInput" type="password" placeholder="Senha" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ddd">
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button id="cancelLogin" class="btn ghost">Cancelar</button>
+        <button id="doLogin" class="btn primary">Entrar</button>
+      </div>
+    </div>
+  </div>  <script>
+    // --- dados iniciais de exemplo ---
+    const SAMPLE_NEWS = [
+      {id:1,title:'Governo anuncia nova obra na província',section:'politica',content:'O governo provincial anunciou hoje...'},
+      {id:2,title:'Vitória do nosso clube local no campeonato',section:'desporto',content:'Em jogo disputado ontem...'},
+      {id:3,title:'Festival cultural reúne músicos e dançarinos',section:'cultura',content:'O evento movimentou a cidade...'},
+    ];
+
+    // --- estados simples ---
+    const newsKey = 'bie_news_items_v1';
+    function loadNews(){
+      const raw = localStorage.getItem(newsKey);
+      if(!raw) { localStorage.setItem(newsKey, JSON.stringify(SAMPLE_NEWS)); return SAMPLE_NEWS; }
+      try{ return JSON.parse(raw) }catch(e){ localStorage.setItem(newsKey, JSON.stringify(SAMPLE_NEWS)); return SAMPLE_NEWS }
+    }
+    function saveAll(news){ localStorage.setItem(newsKey, JSON.stringify(news)); }
+
+    // --- render ---
+    const newsListEl = document.getElementById('newsList');
+    function renderNews(filter=''){
+      const items = loadNews();
+      const q = (filter||'').toLowerCase();
+      newsListEl.innerHTML = '';
+      items.filter(n => !q || n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q)).forEach(n => {
+        const card = document.createElement('article');
+        card.className = 'card border-custom';
+        card.innerHTML = `
+          <h2>${escapeHtml(n.title)}</h2>
+          <div class="meta">Seção: ${n.section} — ID: ${n.id}</div>
+          <p class="excerpt">${escapeHtml(n.content)}</p>
+          <div class="actions">
+            <button class="btn ghost" data-id="${n.id}" data-act="view">Ver</button>
+            <button class="btn" data-id="${n.id}" data-act="share">Partilhar</button>
+            ${isAdmin() ? `<button class="btn primary" data-id="${n.id}" data-act="edit">Editar</button>`: ''}
+          </div>
+        `;
+        newsListEl.appendChild(card);
+      });
+    }
+
+    // --- helpers ---
+    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;') }
+
+    // --- admin simple auth (client-side) ---
+    const ADMIN_PASS = 'bieadmin2025'; // Troque para mecanismo seguro no servidor.
+    function isAdmin(){ return sessionStorage.getItem('bie_is_admin') === '1' }
+    function setAdmin(val){ sessionStorage.setItem('bie_is_admin', val ? '1' : '0'); }
+
+    // --- login UI ---
+    const loginModal = document.getElementById('loginModal');
+    document.getElementById('adminToggle').addEventListener('click', ()=>{ loginModal.style.display='flex'; document.getElementById('passwordInput').focus(); });
+    document.getElementById('cancelLogin').addEventListener('click', ()=>{ loginModal.style.display='none'; });
+    document.getElementById('doLogin').addEventListener('click', ()=>{
+      const p = document.getElementById('passwordInput').value;
+      if(p === ADMIN_PASS){ setAdmin(true); loginModal.style.display='none'; showEditor(true); renderNews(document.getElementById('searchInput').value); alert('Entrou como administrador.'); }
+      else{ alert('Senha inválida.'); }
+    });
+
+    // --- editor actions ---
+    const editor = document.getElementById('editor');
+    function showEditor(show){ editor.classList.toggle('show', !!show); }
+    document.getElementById('saveNews').addEventListener('click', ()=>{
+      const id = document.getElementById('newsId').value;
+      const title = document.getElementById('newsTitle').value.trim();
+      const section = document.getElementById('newsSection').value;
+      const content = document.getElementById('newsContent').value.trim();
+      if(!title||!content){ alert('Preencha título e conteúdo.'); return }
+      const all = loadNews();
+      if(id){ // editar
+        const idx = all.findIndex(x=>String(x.id)===String(id));
+        if(idx>-1){ all[idx].title = title; all[idx].content = content; all[idx].section = section }
+      } else { // novo
+        const nid = Date.now(); all.unshift({id:nid,title,section,content});
+      }
+      saveAll(all); renderNews(document.getElementById('searchInput').value); clearEditor(); showEditor(false);
+    });
+    document.getElementById('cancelEdit').addEventListener('click', ()=>{ clearEditor(); showEditor(false) });
+
+    // editar via botão
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button'); if(!btn) return;
+      const act = btn.dataset.act; const id = btn.dataset.id;
+      if(act === 'edit'){ const all=loadNews(); const item = all.find(x=>String(x.id)===String(id)); if(item){ document.getElementById('newsId').value=item.id; document.getElementById('newsTitle').value=item.title; document.getElementById('newsSection').value=item.section; document.getElementById('newsContent').value=item.content; showEditor(true); window.scrollTo({top:0,behavior:'smooth'}) } }
+      if(act==='view'){ alert('Abrir notícia: '+id) }
+      if(act==='share'){ navigator.share ? navigator.share({title:btn.closest('.card').querySelector('h2').innerText}) : alert('Compartilhar não suportado neste navegador') }
+    });
+
+    function clearEditor(){ document.getElementById('newsId').value=''; document.getElementById('newsTitle').value=''; document.getElementById('newsContent').value=''; }
+
+    // --- search & filters ---
+    document.getElementById('searchInput').addEventListener('input', (e)=>{ renderNews(e.target.value) });
+    document.querySelectorAll('.menu button').forEach(b=>b.addEventListener('click', ()=>{
+      const section = b.dataset.section; const items = loadNews(); renderNews(); // default
+      // quick filter by section
+      const filtered = items.filter(i=>i.section===section || section===undefined);
+      newsListEl.innerHTML=''; filtered.forEach(n=>{
+        const c = document.createElement('div'); c.className='card'; c.innerHTML=`<h2>${escapeHtml(n.title)}</h2><div class='meta'>Seção: ${n.section}</div><p class='excerpt'>${escapeHtml(n.content)}</p>`; newsListEl.appendChild(c);
+      });
+    }));
+
+    // newsletter
+    document.getElementById('subscribe').addEventListener('click', ()=>{ const e=document.getElementById('newsletterEmail').value; if(!e) return alert('Introduza o e‑mail'); alert('Obrigado! (funcionalidade de envio deve ser configurada no servidor)') });
+
+    // --- inicialização ---
+    document.getElementById('year').innerText = new Date().getFullYear();
+    // se já for admin manter editor aberto
+    if(isAdmin()) showEditor(true);
+    renderNews();
+
+    // Nota: autenticação e edição em produção devem ser feitas em servidor seguro com back-end (ex: Node, PHP, Django) e base de dados.
+  </script></body>
+</html>
